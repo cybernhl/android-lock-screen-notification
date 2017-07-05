@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Trevor Tweaks App 2</string>
+    <string name="service_name">notification_listener</string>
+</resources>
