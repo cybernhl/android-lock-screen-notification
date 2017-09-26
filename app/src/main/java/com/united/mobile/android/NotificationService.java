@@ -14,6 +14,7 @@ import android.os.PowerManager;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 
 /**
  * Created by txiao on 12/14/16.
@@ -32,16 +33,19 @@ public class NotificationService extends NotificationListenerService {
     private boolean hasShownAfterLock = false;
 
     @Override
-    public void onNotificationPosted(StatusBarNotification sbn) {
+    public void onNotificationPosted(StatusBarNotification sbn, NotificationListenerService.RankingMap rankingMap) {
+        NotificationListenerService.Ranking ranking = new Ranking();
+        rankingMap.getRanking(sbn.getKey(), ranking);
         if (sbn.getPackageName().equals(NOTIFICATION_RESET_APP)) {
             hasShownAfterLock = false;
             hideNotification();
         } else if (isAppAllowed(sbn.getPackageName())
                 && locked() && !hasShownAfterLock
-                && sbn.getNotification().priority >= Notification.PRIORITY_LOW) {
+                && ranking.getImportance() >= NotificationManager.IMPORTANCE_LOW) {
             showAndHideNotification(TITLE, MESSAGE);
             hasShownAfterLock = true;
         }
+
         super.onNotificationPosted(sbn);
     }
 
@@ -64,12 +68,12 @@ public class NotificationService extends NotificationListenerService {
 
         // this is it, we'll build the notification!
         // in the addAction method, if you don't want any icon, just set the first param to 0
-        Notification mNotification = new Notification.Builder(this)
+        Notification mNotification = new NotificationCompat.Builder(this)
 
+                .setSmallIcon(R.drawable.small_icon)
                 .setContentTitle(title)
                 .setContentText(message)
-                .setSmallIcon(R.drawable.small_icon)
-
+                .setChannelId("channel_01")
                 .build();
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
