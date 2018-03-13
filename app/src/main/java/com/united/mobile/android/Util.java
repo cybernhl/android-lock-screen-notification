@@ -30,7 +30,6 @@ public class Util {
     private static boolean hasShownAfterLock = false;
 
     public static void configure(Context context, NotificationManager mNotificationManager) {
-        System.out.println("Configuring 1");
         // The id of the channel.
         String id = "channel_01";
         // The user-visible name of the channel.
@@ -48,7 +47,6 @@ public class Util {
         context.startService(pushIntent);
 
         Util.scheduleJob(context);
-        System.out.println("Configuring 2");
     }
 
     public static void scheduleJob(Context context) {

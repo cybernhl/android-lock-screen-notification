@@ -19,6 +19,5 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         super.onCreate(savedInstanceState);
-        System.out.println("Configuring 3");
     }
 }
