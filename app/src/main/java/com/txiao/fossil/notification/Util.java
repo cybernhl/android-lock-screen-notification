@@ -25,7 +25,7 @@ public class Util {
     private static final long LOCK_TIME_MILLIS = 20000l;
     private static final String TITLE = "Notification While Screen Locked";
     private static final String MESSAGE = "This notification should automatically close";
-    private static final String NOTIFICATION_RESET_APP = "com.aa.android";
+    private static final String NOTIFICATION_RESET_APP = "com.txiao.fossil.lock";
 
     private static boolean hasShownAfterLock = false;
 
