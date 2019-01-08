@@ -1,4 +1,4 @@
-package com.united.mobile.android;
+package com.txiao.fossil.notification;
 
 import org.junit.Test;
 

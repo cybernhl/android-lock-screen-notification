@@ -1,4 +1,4 @@
-package com.united.mobile.android;
+package com.txiao.fossil.notification;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.united.mobile.android", appContext.getPackageName());
+        assertEquals("com.txiao.fossil.notification", appContext.getPackageName());
     }
 }
