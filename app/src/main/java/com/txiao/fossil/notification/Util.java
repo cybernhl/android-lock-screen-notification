@@ -79,8 +79,7 @@ public class Util {
             hasShownAfterLock = false;
             hideNotification(service);
         } else if (isAppAllowed(sbn.getPackageName(), service)
-                && locked(service) && !hasShownAfterLock
-                && ranking.getImportance() >= NotificationManager.IMPORTANCE_LOW) {
+                && locked(service) && !hasShownAfterLock) {
 
             notificationQueued = false;
 
