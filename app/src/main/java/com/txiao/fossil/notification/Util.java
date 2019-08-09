@@ -28,6 +28,7 @@ public class Util {
     private static final String NOTIFICATION_RESET_APP = "com.txiao.fossil.lock";
 
     private static boolean hasShownAfterLock = false;
+    private static boolean notificationQueued = false;
 
     public static void configure(Context context, NotificationManager mNotificationManager) {
         // The id of the channel.
@@ -65,6 +66,12 @@ public class Util {
         }
     }
 
+    public static void onNotificationRemoved(StatusBarNotification sbn, Service service) {
+        if (NOTIFICATION_RESET_APP.equals(sbn.getPackageName()) && notificationQueued && locked(service)) {
+            showAndHideNotification(TITLE, MESSAGE, service);
+        }
+    }
+
     public static void logicForNotification(StatusBarNotification sbn, NotificationListenerService.RankingMap rankingMap, Service service) {
         NotificationListenerService.Ranking ranking = new NotificationListenerService.Ranking();
         rankingMap.getRanking(sbn.getKey(), ranking);
@@ -74,8 +81,19 @@ public class Util {
         } else if (isAppAllowed(sbn.getPackageName(), service)
                 && locked(service) && !hasShownAfterLock
                 && ranking.getImportance() >= NotificationManager.IMPORTANCE_LOW) {
-            showAndHideNotification(TITLE, MESSAGE, service);
-            hasShownAfterLock = true;
+
+            notificationQueued = false;
+
+            for (StatusBarNotification notification : ((NotificationListenerService) service).getActiveNotifications()) {
+                if (notification != null && NOTIFICATION_RESET_APP.equals(notification.getPackageName())) {
+                    notificationQueued = true;
+                }
+            }
+
+            if (!notificationQueued) {
+                showAndHideNotification(TITLE, MESSAGE, service);
+                hasShownAfterLock = true;
+            }
         }
     }
 
@@ -85,6 +103,8 @@ public class Util {
     }
 
     private static void showAndHideNotification(String title, String message, Service service) {
+
+        notificationQueued = false;
 
         // intent triggered, you can add other intent for other actions
         //Intent intent = new Intent(MainActivity.this, NotificationReceiver.class);

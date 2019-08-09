@@ -32,7 +32,7 @@ public class LockedNotificationListenerService extends NotificationListenerServi
 
     @Override
     public void onNotificationRemoved(StatusBarNotification sbn) {
-        //do nothing
+        Util.onNotificationRemoved(sbn, this);
 
         super.onNotificationRemoved(sbn);
     }
