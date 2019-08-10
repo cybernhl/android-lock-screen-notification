@@ -18,12 +18,7 @@ import android.support.annotation.Nullable;
 
 public class PhoneUnlockService extends Service {
 
-    private BroadcastReceiver mPowerKeyReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            hideNotification();
-        }
-    };
+    private BroadcastReceiver mPowerKeyReceiver = new LockBroadcastReceiver(this);
 
     @Nullable
     @Override
@@ -49,9 +44,18 @@ public class PhoneUnlockService extends Service {
         getApplicationContext().registerReceiver(mPowerKeyReceiver, screenFilter);
     }
 
-    private void hideNotification() {
-        String ns = Context.NOTIFICATION_SERVICE;
-        NotificationManager nMgr = (NotificationManager) getApplicationContext().getSystemService(ns);
-        nMgr.cancelAll();
+    private class LockBroadcastReceiver extends BroadcastReceiver {
+
+        private Service service;
+
+        private LockBroadcastReceiver(Service service) {
+            super();
+            this.service = service;
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Util.hideNotification(service);
+        }
     }
 }

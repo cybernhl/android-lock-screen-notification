@@ -11,6 +11,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
+import android.os.PowerManager;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.support.v4.app.NotificationCompat;
@@ -26,9 +27,11 @@ public class Util {
     private static final String TITLE = "Notification While Screen Locked";
     private static final String MESSAGE = "This notification should automatically close";
     private static final String NOTIFICATION_RESET_APP = "com.txiao.fossil.lock";
+    public static final String LOCK_TAG = "android-lock-screen-notification:myotherwakelock";
 
     private static boolean hasShownAfterLock = false;
     private static boolean notificationQueued = false;
+    private static PowerManager.WakeLock lock;
 
     public static void configure(Context context, NotificationManager mNotificationManager) {
         // The id of the channel.
@@ -46,6 +49,8 @@ public class Util {
         context.startService(pushIntent);
         pushIntent = new Intent(context, PhoneUnlockService.class);
         context.startService(pushIntent);
+
+        lock = ((PowerManager) context.getSystemService(Service.POWER_SERVICE)).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, LOCK_TAG);
 
         Util.scheduleJob(context);
     }
@@ -79,7 +84,8 @@ public class Util {
             hasShownAfterLock = false;
             hideNotification(service);
         } else if (isAppAllowed(sbn.getPackageName(), service)
-                && locked(service) && !hasShownAfterLock) {
+                && locked(service) && !hasShownAfterLock
+                && ranking.getImportance() >= NotificationManager.IMPORTANCE_LOW) {
 
             notificationQueued = false;
 
@@ -102,6 +108,10 @@ public class Util {
     }
 
     private static void showAndHideNotification(String title, String message, Service service) {
+
+        if (!lock.isHeld()) {
+            lock.acquire();
+        }
 
         notificationQueued = false;
 
@@ -140,10 +150,13 @@ public class Util {
         }.init(service), LOCK_TIME_MILLIS);
     }
 
-    private static void hideNotification(Service service) {
+    public static void hideNotification(Service service) {
         String ns = Context.NOTIFICATION_SERVICE;
         NotificationManager nMgr = (NotificationManager) service.getApplicationContext().getSystemService(ns);
         nMgr.cancelAll();
+        if (lock.isHeld()) {
+            lock.release();
+        }
     }
 
     private static boolean isAppAllowed(String packageName, Service service) {
