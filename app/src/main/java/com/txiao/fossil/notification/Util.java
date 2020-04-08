@@ -48,24 +48,6 @@ public class Util {
         context.startService(pushIntent);
         pushIntent = new Intent(context, PhoneUnlockService.class);
         context.startService(pushIntent);
-
-        Util.scheduleJob(context);
-    }
-
-    public static void scheduleJob(Context context) {
-
-        ComponentName serviceComponent = new ComponentName(context, LockedNotificationTimerService.class);
-        JobInfo.Builder builder = new JobInfo.Builder(0, serviceComponent);
-        builder.setPeriodic(1800 * 1000, 600 * 1000); //repeat every 30 minutes, flex 10 minutes
-        JobScheduler jobScheduler = context.getSystemService(JobScheduler.class);
-        jobScheduler.schedule(builder.build());
-
-    }
-
-    public static void logicForNotificationTimer(Service service) {
-        if (hasShownAfterLock && locked(service)) {
-            showAndHideNotification(TITLE, MESSAGE, service);
-        }
     }
 
     public static void onNotificationRemoved(StatusBarNotification sbn, Service service) {
