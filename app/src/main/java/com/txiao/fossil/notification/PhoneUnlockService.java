@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 /**
  * Created by txiao on 12/14/16.
@@ -25,16 +26,24 @@ public class PhoneUnlockService extends Service {
     public IBinder onBind(Intent intent) {
         return null;
     }
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        configureNotifications();
-    }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         getApplicationContext().unregisterReceiver(mPowerKeyReceiver);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        super.onStartCommand(intent, flags, startId);
+        try {
+            getApplicationContext().unregisterReceiver(mPowerKeyReceiver);
+            Log.v("Unregister", "Previous receiver unregistered.");
+        } catch (Exception e) {
+            Log.v("Unregister", "Receiver already unregistered, skipping.");
+        }
+        configureNotifications();
+        return START_STICKY;
     }
 
     public void configureNotifications() {

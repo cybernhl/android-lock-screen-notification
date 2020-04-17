@@ -5,9 +5,6 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
@@ -44,9 +41,9 @@ public class Util {
         // Configure the notification channel.
         mChannel.setDescription(description);
         mNotificationManager.createNotificationChannel(mChannel);
-        Intent pushIntent = new Intent(context, LockedNotificationListenerService.class);
+        Intent pushIntent = new Intent(context, PhoneUnlockService.class);
         context.startService(pushIntent);
-        pushIntent = new Intent(context, PhoneUnlockService.class);
+        pushIntent = new Intent(context, LockedNotificationListenerService.class);
         context.startService(pushIntent);
     }
 
