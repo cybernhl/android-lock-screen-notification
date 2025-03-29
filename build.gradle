@@ -1,6 +1,7 @@
 buildscript {
-    ext{
-        agp_version=libs.versions.agp.version.get()
+    ext {
+        agp_gradle = libs.versions.agp.version.get()
+        kotlin_version =libs.versions.kotlin.version.get()
     }
     repositories {
         google()
@@ -11,7 +12,8 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:$agp_version"
+        classpath "com.android.tools.build:gradle:$agp_gradle"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
